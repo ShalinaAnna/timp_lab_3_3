@@ -19,10 +19,10 @@ wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> codec;
 SUITE(KeyTest)
 {
     TEST(ValidKey) {
-        CHECK_EQUAL("Б-О-Б-АА", codec.to_bytes(Cipher(L"4").encrypt(L"АБОБА")));
+        CHECK_EQUAL("Б-О-Б-АА", codec.to_bytes(Cipher(L"4").encrypt(L"БОИОБ")));
     }
     TEST(LongKey) {
-        CHECK_EQUAL("-АБОБА",codec.to_bytes(Cipher(L"6").encrypt(L"АБОБА")));
+        CHECK_EQUAL("-АБОБА",codec.to_bytes(Cipher(L"6").encrypt(L"БОИОБ")));
     }
     TEST(NegativeKey) {
         CHECK_THROW(Cipher cp(L"-4"),cipher_error);
@@ -43,19 +43,19 @@ SUITE(KeyTest)
 SUITE(EncryptTest)
 {
     TEST_FIXTURE(KeyB_fixture, UpCaseString) {
-        CHECK_EQUAL("Б-О-Б-АА",
-                    codec.to_bytes(p->encrypt(L"АБОБА")));
+        CHECK_EQUAL("О-И-О-ББ",
+                    codec.to_bytes(p->encrypt(L"БОИОБ")));
     }
     TEST_FIXTURE(KeyB_fixture, LowCaseString) {
-        CHECK_EQUAL("Б-О-Б-АА",
-                    codec.to_bytes(p->encrypt(L"абоба")));
+        CHECK_EQUAL("О-И-О-ББ",
+                    codec.to_bytes(p->encrypt(L"боиоб")));
     }
     TEST_FIXTURE(KeyB_fixture, StringWithWhitspaceAndPunct) {
-        CHECK_EQUAL("Б-О-Б-АА",
-                    codec.to_bytes(p->encrypt(L"А!Б О Б,А")));
+        CHECK_EQUAL("О-И-О-ББ",
+                    codec.to_bytes(p->encrypt(L"Б!О И О,Б")));
     }
     TEST_FIXTURE(KeyB_fixture, StringWithNumbers) {
-        CHECK_EQUAL("Б-О-Б-АА", codec.to_bytes(p->encrypt(L"АБ11О3БА")));
+        CHECK_EQUAL("О-И-О-ББ", codec.to_bytes(p->encrypt(L"БО11И3ОБ")));
     }
     TEST_FIXTURE(KeyB_fixture, EmptyString) {
         CHECK_THROW(p->encrypt(L""),cipher_error);
@@ -67,20 +67,20 @@ SUITE(EncryptTest)
 SUITE(DecryptText)
 {
     TEST_FIXTURE(KeyB_fixture, UpCaseString) {
-        CHECK_EQUAL("АБОБА",
-                    codec.to_bytes(p->decrypt(L"Б-О-Б-АА")));
+        CHECK_EQUAL("БОИОБ",
+                    codec.to_bytes(p->decrypt(L"О-И-О-ББ")));
     }
     TEST_FIXTURE(KeyB_fixture, LowCaseString) {
-        CHECK_THROW(p->decrypt(L"Б-О-б-АА"),cipher_error);
+        CHECK_THROW(p->decrypt(L"О-И-О-ББ"),cipher_error);
     }
     TEST_FIXTURE(KeyB_fixture, WhitespaceString) {
-        CHECK_THROW(p->decrypt(L"Б-О-Б -АА"),cipher_error);
+        CHECK_THROW(p->decrypt(L"О-И-О -ББ"),cipher_error);
     }
     TEST_FIXTURE(KeyB_fixture, DigitsString) {
-        CHECK_THROW(p->decrypt(L"Б-23О-Б-АА"),cipher_error);
+        CHECK_THROW(p->decrypt(L"О-23И-О-ББ"),cipher_error);
     }
     TEST_FIXTURE(KeyB_fixture, PunctString) {
-        CHsssssssECK_THROW(p->decrypt(L"Б-О,-Б-А,А"),cipher_error);
+        CHsssssssECK_THROW(p->decrypt(L"О-И,-О-Б,Б"),cipher_error);
     }
     TEST_FIXTURE(KeyB_fixture, EmptyString) {
         CHECK_THROW(p->decrypt(L""),cipher_error);
